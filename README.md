@@ -1,8 +1,8 @@
 # Centromere Satellite Clustering & Classification Pipeline (`centromere-pipeline`)
 
-A modern, high-performance, modular Python package for automated identification, density-scoring, maximal subarray clustering (Kadane's algorithm), and centromeric satellite classification across chromosomes and scaffolds.
+A pipeline for automated identification, density-scoring, maximal subarray clustering (using Kadane's algorithm), and centromeric satellite classification across chromosomes and scaffolds.
 
-This package replaces the legacy multi-language shell script (`scaffold_pipeline.sh`), AWK scripts, and R scripts with a unified, vectorized Python architecture that provides **100% numerical and logical parity** while executing **2–4x faster** with comprehensive testing.
+*Created by Yusuf Mohamedy, Chenxi Zhou and Richard Durbin*
 
 ---
 
@@ -37,14 +37,15 @@ VGP_Centromere_Identification_Pipeline/
 
 ---
 
-## Key Features & Improvements
+## Key Features
 
-- **Vectorized Performance**: Core numerical loops leverage NumPy arrays and Polars DataFrames for ultra-fast interval operations and zero-copy slicing.
-- **100% Algorithmic Parity**: Output BED coordinates, scores, classifications, uncertainty flags, chromosome shapes, and YAML structures match the original pipeline output.
-- **Unified Single-Language Stack**: Replaces Bash, AWK, and R dependencies with pure Python + Matplotlib.
-- **Clean CLI & Python API**: Full CLI interface mirroring all original options, plus clean Python importable interfaces (`from centromere_pipeline import run_pipeline, PipelineConfig`).
-- **Comprehensive Pytest Suite**: 26 automated unit and integration tests covering parity across all consensus species, unit logic, edge cases, and end-to-end toy dataset runs.
-- **Self-Contained Toy Example**: Instant test dataset in `example/` demonstrating all pipeline features in under 1 second.
+- **High-Speed Vectorized Performance**: Core numerical loops leverage NumPy arrays and Polars DataFrames for ultra-fast interval operations and zero-copy slicing.
+- **Kadane's Maximal Subarray Algorithm**: Dynamic array clustering with automated gap penalties and peel-off decomposition for robust cluster boundary identification.
+- **Automated Centromere Classification**: Classifies primary and alternate candidate arrays, detects chromosome morphology (metacentric, submetacentric, acrocentric, telocentric), and flags uncertainty (short arrays, low scores, competing loci/units).
+- **Dual Karyotype Visualizations**: Automatically generates publication-ready karyotype plots for both summary candidate arrays and genome-wide satellite clusters.
+- **Clean CLI & Python API**: Full command-line interface (`centromere-pipeline`) and direct Python library interface (`from centromere_pipeline import run_pipeline, PipelineConfig`).
+- **Self-Contained Demonstration Dataset**: Instant test dataset in `example/` demonstrating all pipeline features in under 1 second.
+- **Automated Test Suite**: 21 unit and integration tests covering algorithmic edge cases, coordinate transformations, and end-to-end execution.
 
 ---
 
@@ -136,10 +137,10 @@ from pathlib import Path
 from centromere_pipeline import PipelineConfig, run_pipeline
 
 config = PipelineConfig(
-    bed_file=Path("scaffolds/aSpeBom-consensus_sat.bed"),
-    chroms_file=Path("scaffolds/output/aSpeBom/aSpeBom_chromosome_lengths.tsv"),
-    scaffolds_file=Path("scaffolds/output/aSpeBom/aSpeBom_scaffold_lengths.tsv"),
-    species="aSpeBom",
+    bed_file=Path("example/consensus_outputs/Unicorn-consensus_sat.bed"),
+    chroms_file=Path("example/Unicorn_chromosome_lengths.tsv"),
+    scaffolds_file=Path("example/Unicorn_scaffold_lengths.tsv"),
+    species="Unicorn",
     auto_plot=True,
 )
 
@@ -168,4 +169,4 @@ For a species `SPECIES`, the pipeline produces:
 pytest -v
 ```
 
-All 25 test cases validate parity across 5 full consensus species genomes (`aSpeBom`, `bTaeGut`, `mDelDel`, `mRhyNas`, `sMobBir`), edge cases (empty files, missing scaffolds, coordinate mismatches), and synthetic 5-column identity datasets.
+The test suite validates algorithmic correctness, Kadane cluster boundaries, edge cases (empty files, missing scaffolds, coordinate mismatches), 5-column identity scoring, and end-to-end execution on the included `Unicorn` dataset.
