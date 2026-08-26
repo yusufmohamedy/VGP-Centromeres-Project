@@ -1,0 +1,175 @@
+species:
+  name: Unicorn
+  total_chromosomes: 8
+  genome_size: 302500000
+  total_scaffold_length: 35500000
+  percentage_of_genome_in_scaffolds: 11.73554
+  percentage_of_all_repeats_in_scaffolds: 46.90223
+
+  best_candidate:
+    unit_name: sat-1-171
+    unit_length: 171
+    consensus_sequence: AATCTGCAAGTGGATATTTGGACCGCTTTGAGGATTTCGTTGGAACCGGGATTTTTGACCGTTTTGAGGAATTTGTTGGAACCGGGATTTTTGACCGTTTTGAGGAATTTGTTGGAACCGGGATTTTTGACCGTTTTGAGGAATTCGTTGGAACCGGGATTTTTGACCGTTTTGA
+    average_centromere_candidate_length: 508611
+    average_centromere_candidate_density: 824
+    average_centromere_candidate_identity: 979
+    number_of_chromosomes_where_it_is_a_centromeric_candidate: 6
+    number_of_chromosomes_where_it_is_present: 7
+    percentage_of_best_candidate_in_scaffolds: 50.28494
+
+  alternative_candidates:
+    - unit_name: sat-2-340
+      unit_length: 340
+      consensus_sequence: GCCCGGGAAATTTCCCGGGCTTTTAAAGGGCCCGGGAAATTTCCCGGGCTTTTAAAGGGCCCGGGAAATTTCCCGGGCTTTTAAAGGGCCCGGGAAATTTCCCGGGCTTTTAAAGGGCCCGGGAAATTTCCCGGGCTTTTAAAGGGCCCGGGAAATTTCCCGGGCTTTTAAAGGGCCCGGGAAATTTCCCGGGCTTTTAAAGGGCCCGGGAAATTTCCCGGGCTTTTAAAGGGCCCGGGAAATTTCCCGGGCTTTTAAAGGGCCCGGGAAATTTCCCGGGCTTTTAAAGGGCCCGGGAAATTTCCCGGGCTTTTAAAGGG
+      average_centromere_candidate_length: 326400
+      average_centromere_candidate_density: 948
+      average_centromere_candidate_identity: 969
+      number_of_chromosomes_where_it_is_a_centromeric_candidate: 1
+      number_of_chromosomes_where_it_is_present: 2
+      percentage_of_alt_candidate_in_scaffolds: 0.0
+
+    - unit_name: sat-9-240
+      unit_length: 240
+      consensus_sequence: TCGATCGATCGAATTCTCGATCGATCGAATTCTCGATCGATCGAATTCTCGATCGATCGAATTCTCGATCGATCGAATTCTCGATCGATCGAATTCTCGATCGATCGAATTCTCGATCGATCGAATTCTCGATCGATCGAATTCTCGATCGATCGAATTCTCGATCGATCGAATTCTCGATCGATCGAATTCTCGATCGATCGAATTCTCGATCGATCGAATTCTCGATCGATCGAATTC
+      average_centromere_candidate_length: 408000
+      average_centromere_candidate_density: 947
+      average_centromere_candidate_identity: 975
+      number_of_chromosomes_where_it_is_a_centromeric_candidate: 1
+      number_of_chromosomes_where_it_is_present: 1
+      percentage_of_alt_candidate_in_scaffolds: 32.92683
+
+    - unit_name: sat-5-171
+      unit_length: 171
+      consensus_sequence: AATCTGGAAGTGGATACTTGGACCGCTTTGAGGACTTCGTGGGAACCGGGATTCTTGACCGTTTTGAGGAATTTGTTGCAACCGGGATTTTTGACCGTTTTCAGGAATTTGTTGGAACCGGGATTTTTAACCGTTTTGAGGAATTCGTTGGAACCGGGATTTTTGACCGTTTTGC
+      number_of_chromosomes_where_it_is_a_centromeric_candidate: 0
+      number_of_chromosomes_where_it_is_present: 1
+      percentage_of_alt_candidate_in_scaffolds: 42.85714
+
+  chromosomes:
+    - accession: chr1
+      chromosome_length: 60000000
+      centromere:
+        start: 29700000
+        end: 30338685
+        unit_name: sat-1-171
+        unit_length: 171
+        density_score: 946
+        identity_score: 980
+        centromere_position: metacentric
+        centromere_uncertain: other unit
+
+      alternate_centromeres:
+        - start: 47900000
+          end: 48113180
+          unit_name: sat-2-340
+          unit_length: 340
+          density_score: 949
+          identity_score: 942
+          centromere_position: acrocentric
+
+    - accession: chr2
+      chromosome_length: 50000000
+      centromere:
+        start: 15725000
+        end: 16306742
+        unit_name: sat-1-171
+        unit_length: 171
+        density_score: 947
+        identity_score: 985
+        centromere_position: submetacentric
+
+    - accession: chr3
+      chromosome_length: 42000000
+      centromere:
+        start: 4064000
+        end: 4405145
+        unit_name: sat-1-171
+        unit_length: 171
+        density_score: 802
+        identity_score: 985
+        centromere_position: acrocentric
+        centromere_uncertain: other region, other unit
+
+      alternate_centromeres:
+        - start: 17830000
+          end: 18190297
+          unit_name: sat-1-171
+          unit_length: 171
+          density_score: 947
+          identity_score: 920
+          centromere_position: metacentric
+
+        - start: 29910000
+          end: 30105795
+          unit_name: sat-5-171
+          unit_length: 171
+          density_score: 948
+          identity_score: 876
+          centromere_position: submetacentric
+
+    - accession: chr4
+      chromosome_length: 35000000
+      centromere:
+        start: 425000
+        end: 1006742
+        unit_name: sat-1-171
+        unit_length: 171
+        density_score: 947
+        identity_score: 988
+        centromere_position: telocentric
+
+    - accession: chr5
+      chromosome_length: 28000000
+      centromere:
+        start: 13970000
+        end: 14039426
+        unit_name: sat-1-171
+        unit_length: 171
+        density_score: 887
+        identity_score: 976
+        centromere_position: metacentric
+        centromere_uncertain: short
+
+    - accession: chr6
+      chromosome_length: 22000000
+      centromere:
+        start: 6425000
+        end: 7263926
+        unit_name: sat-1-171
+        unit_length: 171
+        density_score: 418
+        identity_score: 960
+        centromere_position: submetacentric
+        centromere_uncertain: low score
+
+    - accession: chr7
+      chromosome_length: 18000000
+      centromere:
+        start: 8850000
+        end: 9176400
+        unit_name: sat-2-340
+        unit_length: 340
+        density_score: 948
+        identity_score: 969
+        centromere_position: metacentric
+        centromere_uncertain: other unit
+
+      alternate_centromeres:
+        - start: 3450000
+          end: 3557217
+          unit_name: sat-1-171
+          unit_length: 171
+          density_score: 949
+          identity_score: 957
+          centromere_position: acrocentric
+
+    - accession: chr8
+      chromosome_length: 12000000
+      centromere:
+        start: 1310000
+        end: 1718000
+        unit_name: sat-9-240
+        unit_length: 240
+        density_score: 947
+        identity_score: 975
+        centromere_position: acrocentric
