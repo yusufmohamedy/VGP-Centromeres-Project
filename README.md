@@ -1,4 +1,4 @@
-# Centromere Satellite Clustering & Classification Pipeline (`centromere-pipeline`)
+# VGP Satellite Centromere Identification Pipeline
 
 A pipeline for automated identification, density-scoring, maximal subarray clustering (using Kadane's algorithm), and centromeric satellite classification across chromosomes and scaffolds.
 
