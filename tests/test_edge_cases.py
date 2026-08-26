@@ -175,3 +175,38 @@ def test_4col_bed_with_plotting(tmp_path: Path):
     assert results["yaml_file"].exists()
     assert results["summary_plot"] is not None and results["summary_plot"].exists()
     assert results["all_clusters_plot"] is not None and results["all_clusters_plot"].exists()
+
+
+def test_empty_or_zero_byte_scaffolds_file_with_plotting(tmp_path: Path):
+    """Ensure T2T assemblies with empty (0 bytes) or missing scaffolds files run and plot cleanly."""
+    from centromere_pipeline.cli import run_pipeline
+
+    bed_file = tmp_path / "test_t2t.bed"
+    bed_file.write_text(
+        "chr1\t100000\t150000\tsat_170\t980\n"
+        "chr1\t150050\t200000\tsat_170\t985\n"
+        "chr2\t50000\t80000\tsat_170\t970\n"
+    )
+
+    chr_file = tmp_path / "chroms.tsv"
+    chr_file.write_text("chr1\t1000000\nchr2\t800000\n")
+
+    # 0-byte empty scaffold file (T2T assembly)
+    empty_scaf_file = tmp_path / "empty_scafs.tsv"
+    empty_scaf_file.touch()
+
+    out_dir = tmp_path / "output_t2t"
+
+    config = PipelineConfig(
+        bed_file=bed_file,
+        chroms_file=chr_file,
+        scaffolds_file=empty_scaf_file,
+        species="test_t2t_species",
+        output_dir=out_dir,
+        auto_plot=True,
+    )
+
+    results = run_pipeline(config)
+    assert results["yaml_file"].exists()
+    assert results["summary_plot"] is not None and results["summary_plot"].exists()
+    assert results["all_clusters_plot"] is not None and results["all_clusters_plot"].exists()
