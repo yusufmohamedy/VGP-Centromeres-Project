@@ -141,3 +141,37 @@ def test_cli_consensus_fa_argument(tmp_path: Path):
     )
     assert cfg2.consensus_fa == tmp_path / "legacy.fa"
     assert cfg2.fasta_file == tmp_path / "legacy.fa"
+
+
+def test_4col_bed_with_plotting(tmp_path: Path):
+    """Ensure 4-column BED datasets without identity scores plot without KeyError."""
+    from centromere_pipeline.cli import run_pipeline
+
+    bed_file = tmp_path / "test_4col.bed"
+    bed_file.write_text(
+        "chr1\t100000\t150000\tsat_170\n"
+        "chr1\t150050\t200000\tsat_170\n"
+        "scaf_1\t10000\t25000\tsat_170\n"
+    )
+
+    chr_file = tmp_path / "chroms.tsv"
+    chr_file.write_text("chr1\t1000000\n")
+
+    scaf_file = tmp_path / "scafs.tsv"
+    scaf_file.write_text("scaf_1\t100000\n")
+
+    out_dir = tmp_path / "output"
+
+    config = PipelineConfig(
+        bed_file=bed_file,
+        chroms_file=chr_file,
+        scaffolds_file=scaf_file,
+        species="test_4col_species",
+        output_dir=out_dir,
+        auto_plot=True,
+    )
+
+    results = run_pipeline(config)
+    assert results["yaml_file"].exists()
+    assert results["summary_plot"] is not None and results["summary_plot"].exists()
+    assert results["all_clusters_plot"] is not None and results["all_clusters_plot"].exists()

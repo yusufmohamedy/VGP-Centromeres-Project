@@ -424,7 +424,7 @@ def plot_combined_yaml(
                 "end": float(row["cluster_end"]) + off,
                 "unit": str(row["unit_id"]),
                 "score": float(row.get("density_score", 0)),
-                "identity_score": float(row["identity_score"]) if row["identity_score"] is not None else None,
+                "identity_score": float(row["identity_score"]) if row.get("identity_score") is not None else None,
                 "candidate_type": "Alternate Candidate",
             })
 
