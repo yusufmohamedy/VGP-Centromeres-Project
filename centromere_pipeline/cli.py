@@ -52,7 +52,7 @@ def build_arg_parser() -> argparse.ArgumentParser:
 
     # Required sequence length files
     parser.add_argument("-C", "--chroms", dest="chroms", required=True, help="Path to chromosome lengths file (tsv: chr\\tlength)")
-    parser.add_argument("-Cs", "--scaffolds", dest="scaffolds", required=True, help="Path to scaffold lengths file (tsv: scaffold\\tlength)")
+    parser.add_argument("-Cs", "--scaffolds", dest="scaffolds", default=None, help="Path to scaffold lengths file (tsv: scaffold\\tlength) [Optional for T2T / chromosome-only assemblies]")
 
     # Sample & Output Metadata
     parser.add_argument("-s", "-S", "--species", "--prefix", dest="species", default=None, help="Species/Sample identifier (default: auto-derived from BED)")
@@ -108,8 +108,8 @@ def run_pipeline(config: PipelineConfig, logger: Optional[logging.Logger] = None
     if not chroms_path.exists():
         raise FileNotFoundError(f"Chromosome lengths file not found: {chroms_path}")
 
-    scaffolds_path = Path(config.scaffolds_file).resolve()
-    if not scaffolds_path.exists():
+    scaffolds_path = Path(config.scaffolds_file).resolve() if config.scaffolds_file else None
+    if scaffolds_path and not scaffolds_path.exists():
         raise FileNotFoundError(f"Scaffold lengths file not found: {scaffolds_path}")
 
     # Derive species identifier
@@ -127,7 +127,7 @@ def run_pipeline(config: PipelineConfig, logger: Optional[logging.Logger] = None
 
     # Load sequence lengths
     chrom_lengths = load_sequence_lengths(chroms_path)
-    scaffold_lengths = load_sequence_lengths(scaffolds_path)
+    scaffold_lengths = load_sequence_lengths(scaffolds_path) if scaffolds_path else {}
 
     # Read BED dataset
     bed_df, has_identity = read_bed_file(bed_path)
@@ -140,7 +140,7 @@ def run_pipeline(config: PipelineConfig, logger: Optional[logging.Logger] = None
     logger.info(f"  Consensus FASTA: {fasta_path if fasta_path else 'None'}")
     logger.info(f"  BED file:        {bed_path} ({len(bed_df):,} intervals)")
     logger.info(f"  Chroms file:     {chroms_path} ({len(chrom_lengths)} chromosomes)")
-    logger.info(f"  Scaffolds file:  {scaffolds_path} ({len(scaffold_lengths)} scaffolds)")
+    logger.info(f"  Scaffolds file:  {scaffolds_path if scaffolds_path else 'None'} ({len(scaffold_lengths)} scaffolds)")
     logger.info(f"  Min Unit Size:   {config.min_unit_size} bp")
     logger.info(f"  Output Dir:      {output_dir}")
     logger.info(f"  Plots enabled:   {config.auto_plot}")
@@ -261,7 +261,7 @@ def main(argv: Optional[List[str]] = None) -> None:
     config = PipelineConfig(
         bed_file=Path(bed_path_str),
         chroms_file=Path(args.chroms),
-        scaffolds_file=Path(args.scaffolds),
+        scaffolds_file=Path(args.scaffolds) if args.scaffolds else None,
         species=args.species or "",
         output_dir=Path(args.output_dir) if args.output_dir else None,
         consensus_fa=Path(args.consensus_fa) if args.consensus_fa else None,

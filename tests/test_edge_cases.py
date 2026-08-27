@@ -210,3 +210,36 @@ def test_empty_or_zero_byte_scaffolds_file_with_plotting(tmp_path: Path):
     assert results["yaml_file"].exists()
     assert results["summary_plot"] is not None and results["summary_plot"].exists()
     assert results["all_clusters_plot"] is not None and results["all_clusters_plot"].exists()
+
+
+def test_cli_omitted_scaffolds_file(tmp_path: Path):
+    """Ensure omitting -Cs argument completely works for chromosome-only / T2T assemblies."""
+    from centromere_pipeline.cli import build_arg_parser, run_pipeline
+
+    parser = build_arg_parser()
+    args = parser.parse_args([
+        "sample.bed",
+        "-C", "chroms.tsv",
+    ])
+    assert args.scaffolds is None
+
+    bed_file = tmp_path / "test_no_scaf.bed"
+    bed_file.write_text("chr1\t100000\t150000\tsat_170\n")
+
+    chr_file = tmp_path / "chroms.tsv"
+    chr_file.write_text("chr1\t1000000\n")
+
+    out_dir = tmp_path / "output_no_scaf"
+
+    config = PipelineConfig(
+        bed_file=bed_file,
+        chroms_file=chr_file,
+        scaffolds_file=None,  # Completely omitted
+        species="test_no_scaf_species",
+        output_dir=out_dir,
+        auto_plot=True,
+    )
+
+    results = run_pipeline(config)
+    assert results["yaml_file"].exists()
+    assert results["summary_plot"] is not None and results["summary_plot"].exists()
