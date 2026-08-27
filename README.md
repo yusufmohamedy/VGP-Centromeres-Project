@@ -83,20 +83,21 @@ pip install -e .
 
 ### Basic Execution
 ```bash
-centromere-pipeline <sat.bed> -C <chroms_file> -Cs <scaffolds_file> [options]
+centromere-pipeline <sat.bed> -C <chroms_file> [-Cs <scaffolds_file>] [options]
 ```
 Or via Python module:
 ```bash
-python -m centromere_pipeline.cli <sat.bed> -C <chroms_file> -Cs <scaffolds_file> [options]
+python -m centromere_pipeline.cli <sat.bed> -C <chroms_file> [-Cs <scaffolds_file>] [options]
 ```
 
-### Example: Running a Full Pipeline with Visualizations
+### Example: Running with Toy Dataset & Visualizations
 ```bash
-centromere-pipeline scaffolds/aSpeBom-consensus_sat.bed \
-    -C scaffolds/output/aSpeBom/aSpeBom_chromosome_lengths.tsv \
-    -Cs scaffolds/output/aSpeBom/aSpeBom_scaffold_lengths.tsv \
-    -s aSpeBom \
-    -o output/aSpeBom \
+centromere-pipeline example/consensus_outputs/Unicorn-consensus_sat.bed \
+    -C example/Unicorn_chromosome_lengths.tsv \
+    -Cs example/Unicorn_scaffold_lengths.tsv \
+    -s Unicorn \
+    -o pipeline_outputs \
+    -consensus_fa example/consensus_outputs/Unicorn-sat_clusters.fa \
     -P
 ```
 
@@ -106,7 +107,7 @@ centromere-pipeline scaffolds/aSpeBom-consensus_sat.bed \
 |---|---|---|---|
 | `<sat.bed>` or `-b` | Path | *Required* | Path to satellite BED annotation file (4 or 5 columns) |
 | `-C`, `--chroms` | Path | *Required* | Path to chromosome lengths file (`chr\tlength`) |
-| `-Cs`, `--scaffolds` | Path | *Required* | Path to scaffold lengths file (`scaffold\tlength`) |
+| `-Cs`, `--scaffolds` | Path | `None` | Path to scaffold lengths file (`scaffold\tlength`) [Optional for T2T/chromosome-only] |
 | `-s`, `--species` | String | Auto-derived | Species / Sample identifier (derived from BED name if omitted) |
 | `-o`, `--output` | Path | `./output/<species>` | Output directory |
 | `-consensus_fa`, `--consensus-fa`, `-fa` | Path | Auto-detected | Path to consensus FASTA file (`consensus_outputs/<species>-sat_clusters.fa`) |
