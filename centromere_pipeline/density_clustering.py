@@ -146,7 +146,15 @@ def compute_auto_coefficient(
         if m_count == 0:
             continue
 
-        k_start = 0
+        # Build a prefix-sum of chunk sizes once per chromosome.
+        # prefix[i+1] - prefix[i]  == m_e[i] - m_s[i]  (chunk size)
+        # prefix[hi] - prefix[lo]  == total unclipped bp of chunks [lo, hi)
+        # This lets each window query run in O(log N) instead of O(window width).
+        chunk_sizes = (m_e - m_s).astype(np.int64)
+        prefix = np.empty(m_count + 1, dtype=np.int64)
+        prefix[0] = 0
+        np.cumsum(chunk_sizes, out=prefix[1:])
+
         for m in range(m_count):
             mid = (int(m_s[m]) + int(m_e[m])) // 2
             w_start = mid - window_bp
@@ -155,18 +163,31 @@ def compute_auto_coefficient(
             w_end = mid + window_bp
             w_len = w_end - w_start
 
-            # Advance k_start past chunks ending before w_start
-            while k_start < m_count and m_e[k_start] <= w_start:
-                k_start += 1
+            # Binary search for the half-open slice [lo, hi) of chunks that
+            # overlap [w_start, w_end):
+            #   lo: first chunk whose end  > w_start  (i.e. not entirely left)
+            #   hi: first chunk whose start >= w_end  (i.e. entirely right)
+            lo = int(np.searchsorted(m_e, w_start, side="right"))
+            hi = int(np.searchsorted(m_s, w_end, side="left"))
 
-            cov_bp = 0
-            for k in range(k_start, m_count):
-                if m_s[k] >= w_end:
-                    break
-                o_s = max(m_s[k], w_start)
-                o_e = min(m_e[k], w_end)
-                if o_e > o_s:
-                    cov_bp += int(o_e - o_s)
+            if lo >= hi:
+                dens_list.append(0.0)
+                continue
+
+            # Sum bp for all chunks in [lo, hi) assuming no clipping …
+            cov_bp = int(prefix[hi] - prefix[lo])
+
+            # … then correct the two boundary chunks that may stick out.
+            left_clip = int(w_start - m_s[lo])
+            if left_clip > 0:
+                cov_bp -= left_clip
+
+            right_clip = int(m_e[hi - 1] - w_end)
+            if right_clip > 0:
+                cov_bp -= right_clip
+
+            if cov_bp < 0:
+                cov_bp = 0
 
             dens = (float(cov_bp) / float(w_len)) if w_len > 0 else 0.0
             dens_list.append(dens)
