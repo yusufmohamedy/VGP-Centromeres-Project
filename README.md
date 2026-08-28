@@ -12,6 +12,8 @@ A pipeline for automated identification, density-scoring, maximal subarray clust
 VGP_Centromere_Identification_Pipeline/
 ├── pyproject.toml              # Build & dependency configuration
 ├── README.md                   # Documentation & CLI reference
+├── inputs/                     # Guide & documentation on preparing required inputs
+│   └── creating_inputs.md      # Instructions for length TSVs & consensus BED generation
 ├── example/                    # Self-contained demonstration dataset
 │   ├── Unicorn_chromosome_lengths.tsv
 │   ├── Unicorn_scaffold_lengths.tsv
@@ -19,6 +21,10 @@ VGP_Centromere_Identification_Pipeline/
 │   │   ├── Unicorn-consensus_sat.bed
 │   │   └── Unicorn-sat_clusters.fa
 │   └── run_example.sh          # 1-click demonstration runner
+├── slurm_example/              # HPC cluster SLURM submission scripts & task templates
+│   ├── example_centromeric_pipeline_slurm.sh
+│   ├── example_consensus_run_slurm.sh
+│   └── example_slurm_array_task_list.tsv
 ├── centromere_pipeline/        # Production Python package
 │   ├── __init__.py
 │   ├── cli.py                  # CLI entry point, structured logging, orchestration
@@ -79,6 +85,10 @@ pip install -e .
 
 ---
 
+## input files for the pipeline
+check out my inputs folder in this repo for more information
+
+
 ## Command-Line Usage
 
 ### Basic Execution
@@ -103,31 +113,31 @@ centromere-pipeline example/consensus_outputs/Unicorn-consensus_sat.bed \
 
 ### Command-Line Arguments Reference
 
-| Option | Type | Default | Description |
-|---|---|---|---|
-| `<sat.bed>` or `-b` | Path | *Required* | Path to satellite BED annotation file (4 or 5 columns) |
-| `-C`, `--chroms` | Path | *Required* | Path to chromosome lengths file (`chr\tlength`) |
-| `-Cs`, `--scaffolds` | Path | `None` | Path to scaffold lengths file (`scaffold\tlength`) [Optional for T2T/chromosome-only] |
-| `-s`, `--species` | String | Auto-derived | Species / Sample identifier (derived from BED name if omitted) |
-| `-o`, `--output` | Path | `./output/<species>` | Output directory |
-| `-consensus_fa`, `--consensus-fa`, `-fa` | Path | Auto-detected | Path to consensus FASTA file (`consensus_outputs/<species>-sat_clusters.fa`) |
-| `-P` | Flag | `False` | Generate combined karyotype visualizations (PNG) |
-| `-plot_score` | String | `density` | Metric for plotting (`density` or `identity`) |
-| `-su` | Int | `0` | Minimum monomer unit size in bp (filters smaller repeats) |
-| `-cm` | Int | `20` | Minimum copy number multiplier (noise filter) |
-| `-min_density` | Float | `300.0` | Minimum Kadane density score for primary qualification |
-| `-low_score` | Float | `500.0` | Score threshold below which primary is flagged `low_score` |
-| `-min_size_pct` | Float | `0.25` | Fraction of average primary bp for `short` flag |
-| `-other_region_pct` | Float | `0.25` | Fraction of primary bp for `other_region` / `other_unit` flags |
-| `-id_pct` | Float | `0.70` | Identity score tiebreak size ratio threshold |
-| `-g` | Float | `1e7` | Hard maximum gap limit in bp |
-| `-l` | Float | `0.0` | Minimum cumulative repeat chunk length (bp) to keep cluster |
-| `-sg` | Float | `1e3` | Zero-penalty gap threshold (bp) |
-| `-tg` | Float | `1e6` | Gap distance where logarithmic penalty reaches target coefficient |
-| `-w` | Int | `100,000` | Sliding window (+/- bp) for local density estimation |
-| `-min_coef` | Float | `0.1` | Lower floor on auto-calculated penalty coefficient |
-| `-max_coef` | Float | `1.0` | Upper cap on auto-calculated penalty coefficient |
-| `-coef` | Float | `None` | Manual override for penalty coefficient |
+| Option                                   | Type   | Default              | Description                                                                           |
+| ---------------------------------------- | ------ | -------------------- | ------------------------------------------------------------------------------------- |
+| `<sat.bed>` or `-b`                      | Path   | *Required*           | Path to satellite BED annotation file (4 or 5 columns)                                |
+| `-C`, `--chroms`                         | Path   | *Required*           | Path to chromosome lengths file (`chr\tlength`)                                       |
+| `-Cs`, `--scaffolds`                     | Path   | `None`               | Path to scaffold lengths file (`scaffold\tlength`) [Optional for T2T/chromosome-only] |
+| `-s`, `--species`                        | String | Auto-derived         | Species / Sample identifier (derived from BED name if omitted)                        |
+| `-o`, `--output`                         | Path   | `./output/<species>` | Output directory                                                                      |
+| `-consensus_fa`, `--consensus-fa`, `-fa` | Path   | Auto-detected        | Path to consensus FASTA file (`consensus_outputs/<species>-sat_clusters.fa`)          |
+| `-P`                                     | Flag   | `False`              | Generate combined karyotype visualizations (PNG)                                      |
+| `-plot_score`                            | String | `density`            | Metric for plotting (`density` or `identity`)                                         |
+| `-su`                                    | Int    | `0`                  | Minimum monomer unit size in bp (filters smaller repeats)                             |
+| `-cm`                                    | Int    | `20`                 | Minimum copy number multiplier (noise filter)                                         |
+| `-min_density`                           | Float  | `300.0`              | Minimum Kadane density score for primary qualification                                |
+| `-low_score`                             | Float  | `500.0`              | Score threshold below which primary is flagged `low_score`                            |
+| `-min_size_pct`                          | Float  | `0.25`               | Fraction of average primary bp for `short` flag                                       |
+| `-other_region_pct`                      | Float  | `0.25`               | Fraction of primary bp for `other_region` / `other_unit` flags                        |
+| `-id_pct`                                | Float  | `0.70`               | Identity score tiebreak size ratio threshold                                          |
+| `-g`                                     | Float  | `1e7`                | Hard maximum gap limit in bp                                                          |
+| `-l`                                     | Float  | `0.0`                | Minimum cumulative repeat chunk length (bp) to keep cluster                           |
+| `-sg`                                    | Float  | `1e3`                | Zero-penalty gap threshold (bp)                                                       |
+| `-tg`                                    | Float  | `1e6`                | Gap distance where logarithmic penalty reaches target coefficient                     |
+| `-w`                                     | Int    | `100,000`            | Sliding window (+/- bp) for local density estimation                                  |
+| `-min_coef`                              | Float  | `0.1`                | Lower floor on auto-calculated penalty coefficient                                    |
+| `-max_coef`                              | Float  | `1.0`                | Upper cap on auto-calculated penalty coefficient                                      |
+| `-coef`                                  | Float  | `None`               | Manual override for penalty coefficient                                               |
 
 ---
 
@@ -171,3 +181,9 @@ pytest -v
 ```
 
 The test suite validates algorithmic correctness, Kadane cluster boundaries, edge cases (empty files, missing scaffolds, coordinate mismatches), 5-column identity scoring, and end-to-end execution on the included `Unicorn` dataset.
+
+
+
+## i have added some example slurm scripts that should be helpful for you to run this on the HPC cluster
+the scripts are: example_slurm_array_task_list.tsv, example_consensus_run_slurm.sh, example_centromeric_pipeline_slurm.sh
+
